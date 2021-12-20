@@ -13,7 +13,30 @@ namespace Laba8 {
     public class DGroup : DrawableObject {
 
         public override Point[,] getBound() {
-            throw new NotImplementedException();
+            List<Point[,]> p = new List<Point[,]>();
+            int size = 0;
+            foreach (DrawableObject a in objs) {
+                Point[,] b = a.getBound();
+                p.Add(b);
+                size += b.GetLength(0);
+            }
+            
+
+            Point[,] ps = new Point[size, 2];
+
+            int i = 0;
+            foreach(Point[,] a in p) {
+                int j = 0;
+                for (; j < a.GetLength(0); j++) {
+                    ps[i + j, 0] = a[j, 0];
+                    ps[i + j, 1] = a[j, 1];
+                }
+                i += j;
+
+            }
+
+            return ps;
+            
         }
 
         //public Group(Point point1_, Point point2_, Color color_) : base(point1_, point2_, color_) {
@@ -24,6 +47,22 @@ namespace Laba8 {
         public DrawableObject selected {protected set; get; }
         DrawableObject prevClick;
 
+
+
+        public bool isContain(DrawableObject obj) {
+            if (obj == this) return true;
+            Console.WriteLine("Check smth");
+            foreach (DrawableObject a in objs) {
+                
+                if (obj == a) return true;
+                if (a as DGroup != null) {
+                    if (((DGroup)a).isContain(obj) == true) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         public override Color color {
             get { return myColor; }
@@ -91,7 +130,7 @@ namespace Laba8 {
             }
             point1 = new Point(minX, minY);
             point2 = new Point(maxX, maxY);
-            Console.WriteLine("checkBound");
+            //Console.WriteLine("checkBound");
         }
         public override bool click(object sender, MouseEventArgs e) {
 
@@ -192,7 +231,7 @@ namespace Laba8 {
             if (selected != null) {
                 selected.move(moveX, moveY);
                 checkBound();
-                Console.WriteLine("Here");
+                //Console.WriteLine("Here");
                 return;
             }
 

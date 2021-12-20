@@ -49,7 +49,7 @@ namespace Laba8 {
                     if (d != null) {
 
                         if (d.selected != null) {
-                            Console.WriteLine("SMTH");
+                            //Console.WriteLine("SMTH");
                             temp = d.selected;
                         }
                         else {
@@ -61,7 +61,7 @@ namespace Laba8 {
                 d = null;
 
                 if (temp == node.Tag) {
-                    Console.WriteLine(temp);
+                    //Console.WriteLine(temp);
                     node.BackColor = selectColor;
                     foreach (TreeNode c in node.Nodes) {
                         c.BackColor = selectColor;

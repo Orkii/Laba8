@@ -19,26 +19,73 @@ namespace Laba8 {
         DrawableObject example;
         Tree tree;
 
+        List<DrawableObject> nowS = new List<DrawableObject>();
+        StorageListT needToStickSender = new StorageListT();
+        MyEventArgs needToStickE;
+        //List<MyEventArgs> needToStickE = new List<MyEventArgs>();
+        DrawableObject firstS = null;
+        bool doStickIsDoing = false;
         private void stickChanged(object sender, EventArgs e) {
-            if (sender as DrawableObject == null) return;
-            if (e as MyEventArgs == null) return;
+            if (doStickIsDoing == false) {
+                if (sender as DrawableObject == null) return;
+                if (e as MyEventArgs == null) return;
 
-            DrawableObject obj = sender as DrawableObject;
-            MyEventArgs ee = e as MyEventArgs;
+                Console.WriteLine((e as MyEventArgs).x + "   " + (e as MyEventArgs).y);
 
-            foreach(DrawableObject a in Info.storage) {
-                if (obj != a) {
-                    if (obj.checkContact(a) == true) a.move(ee.x, ee.y);
-                    a.checkExitByMove(panel1.ClientRectangle);
+                needToStickSender.add((sender as DrawableObject), needToStickSender.elementCount);
+                if (needToStickE == null) needToStickE = e as MyEventArgs;
+                needToStickE = e as MyEventArgs;
+            }
+        }
+
+        private void doStickThing() {
+
+            if (needToStickE == null) return;
+            MyEventArgs ee = needToStickE;
+
+            
+            //doStickIsDoing = true;
+
+            foreach (DrawableObject obj in needToStickSender) {
+                nowS.Add(obj);
+                foreach (DrawableObject a in Info.storage) {
+
+                    if (a == obj) {//Если сам себя двигает
+                        goto endP;
+                    }
+
+                    if (a as DGroup != null) {
+                        if (((DGroup)a).isContain(obj)) {
+                            nowS.Add(a);
+                            goto endP;
+                        }
+                    }
+
+                    foreach (DrawableObject b in nowS) {//Если уже подвигали
+                        Console.WriteLine("Same");
+                        if (a == b) goto endP;
+                    }
+
+                    if (obj.checkContact(a)) {//Двигаем
+                        nowS.Add(a);
+                        a.move(ee.x, ee.y);
+                        a.checkExitByMove(panel1.ClientRectangle);
+                    }
+                endP:;
                 }
             }
+
+            //ee = null;
+            nowS.Clear();
+            needToStickSender.clear();
+            doStickIsDoing = false;
 
         }
         private void ddlChanged(object sender, EventArgs e) {
 
             comboBox1.Items.Clear();
             comboBox1.ResetText();
-            Console.WriteLine("ТУТ");
+            //Console.WriteLine("ТУТ");
  
 
             foreach (var a in Info.thinhCanCreate) {
@@ -87,19 +134,19 @@ namespace Laba8 {
         private void panel1_Paint(object sender, PaintEventArgs e) {
             foreach (DrawableObject a in Info.storage) {
                 a.draw(sender, e);
-                Point[,] b = a.getBound();
-                for(int i = 0; i < b.GetLength(0); i++) {
-                    e.Graphics.DrawLine(new Pen(Color.Red, 5), b[i, 0], b[i, 1]);
-                }
+                //Point[,] b = a.getBound();
+                //for(int i = 0; i < b.GetLength(0); i++) {
+                //    e.Graphics.DrawLine(new Pen(Color.Red, 5), b[i, 0], b[i, 1]);
+                //}
             }
             foreach (DrawableObject a in Info.selectedObj) {
                 a.draw(sender, e);
                 a.drawChooseLine(sender, e);
                 a.drawResizeDot(sender, e);
-                Point[,] b = a.getBound();
-                for (int i = 0; i < b.GetLength(0); i++) {
-                    e.Graphics.DrawLine(new Pen(Color.Red, 5), b[i, 0], b[i, 1]);
-                }
+                //Point[,] b = a.getBound();
+                //for (int i = 0; i < b.GetLength(0); i++) {
+                //    e.Graphics.DrawLine(new Pen(Color.Red, 5), b[i, 0], b[i, 1]);
+                //}
             }
         }
 
@@ -145,6 +192,7 @@ namespace Laba8 {
                 instrument.move(sender, e);
                 panel1.Invalidate();
             }
+            doStickThing();
         }
         private void panel1_MouseUp(object sender, MouseEventArgs e) {
             if (instrument != null) {
@@ -153,7 +201,9 @@ namespace Laba8 {
             if (createStick == true) {
                 if (instrument as InsCreate != null) {
                     Info.stickObj.add(Info.selectedObj.get(0));
-                    Info.selectedObj.get(0).onMoved += new EventHandler(stickChanged);
+                    if (Info.selectedObj.get(0) != null) {
+                        Info.selectedObj.get(0).onBeforeMoved += new EventHandler(stickChanged);
+                    }
                 }
             }
             instrument = null;
@@ -162,7 +212,7 @@ namespace Laba8 {
 
 
             if (Info.selectedObj.elementCount != 0) {
-                Console.WriteLine("Diam = " + Info.selectedObj.get(0).rectangle.Width);
+                //Console.WriteLine("Diam = " + Info.selectedObj.get(0).rectangle.Width);
 
                 foreach (DrawableObject a in Info.storage) {
                     if (Info.selectedObj.get(0).checkContact(a) == true) t = true;
@@ -234,7 +284,7 @@ namespace Laba8 {
                 Info.selectedObj.clear();
                 foreach(DrawableObject a in Info.storage) {
                     Info.selectedObj.add(a);
-                    Console.WriteLine(a);
+                    //Console.WriteLine(a);
                 }
                 panel1.Invalidate();
             }
