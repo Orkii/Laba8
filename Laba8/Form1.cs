@@ -26,25 +26,61 @@ namespace Laba8 {
         DrawableObject firstS = null;
         bool doStickIsDoing = false;
         private void stickChanged(object sender, EventArgs e) {
-            if (doStickIsDoing == false) {
-                if (sender as DrawableObject == null) return;
-                if (e as MyEventArgs == null) return;
+            
+            if (sender as DrawableObject == null) return;
+            if (e as MyEventArgs == null) return;
 
-                Console.WriteLine((e as MyEventArgs).x + "   " + (e as MyEventArgs).y);
+            MyEventArgs ee = e as MyEventArgs;
+            DrawableObject obj = sender as DrawableObject;
 
-                needToStickSender.add((sender as DrawableObject), needToStickSender.elementCount);
-                if (needToStickE == null) needToStickE = e as MyEventArgs;
-                needToStickE = e as MyEventArgs;
+                nowS.Add(obj);
+            foreach (DrawableObject a in Info.storage) {
+
+                if (a == obj) {//Если сам себя двигает
+                    goto endP;
+                }
+
+                if (a as DGroup != null) {
+                    if (((DGroup)a).isContain(obj)) {
+                        nowS.Add(a);
+                        goto endP;
+                    }
+                }
+
+                foreach (DrawableObject b in nowS) {//Если уже подвигали
+                    Console.WriteLine("Same");
+                    if (a == b) goto endP;
+                }
+
+                if (obj.checkContact(a)) {//Двигаем
+                    nowS.Add(a);
+                    a.move(ee.x, ee.y);
+                    a.checkExitByMove(panel1.ClientRectangle);
+                }
+            endP:;
             }
+            
+
+
+            //Console.WriteLine((e as MyEventArgs).x + "   " + (e as MyEventArgs).y);
+            //
+            //needToStickSender.add((sender as DrawableObject), needToStickSender.elementCount);
+            //if (needToStickE == null) needToStickE = e as MyEventArgs;
+            //needToStickE = e as MyEventArgs;
+
         }
 
+        private void stopStickThing() {
+            nowS.Clear();
+            //needToStickSender.clear();
+        }
         private void doStickThing() {
 
             if (needToStickE == null) return;
             MyEventArgs ee = needToStickE;
 
             
-            //doStickIsDoing = true;
+
 
             foreach (DrawableObject obj in needToStickSender) {
                 nowS.Add(obj);
@@ -75,7 +111,6 @@ namespace Laba8 {
                 }
             }
 
-            //ee = null;
             nowS.Clear();
             needToStickSender.clear();
             doStickIsDoing = false;
@@ -192,7 +227,8 @@ namespace Laba8 {
                 instrument.move(sender, e);
                 panel1.Invalidate();
             }
-            doStickThing();
+            stopStickThing();
+            //doStickThing();
         }
         private void panel1_MouseUp(object sender, MouseEventArgs e) {
             if (instrument != null) {
