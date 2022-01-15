@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Laba8 {
-    static class Info {
+    public static class Info {
         public static Stack<Command> commands = new Stack<Command>();
         public static StorageListT storage = new StorageListT();
         public static StorageListT selectedObj = new StorageListT();

@@ -20,11 +20,7 @@ namespace Laba8 {
         Tree tree;
 
         List<DrawableObject> nowS = new List<DrawableObject>();
-        StorageListT needToStickSender = new StorageListT();
-        MyEventArgs needToStickE;
-        //List<MyEventArgs> needToStickE = new List<MyEventArgs>();
-        DrawableObject firstS = null;
-        bool doStickIsDoing = false;
+
         private void stickChanged(object sender, EventArgs e) {
             
             if (sender as DrawableObject == null) return;
@@ -33,7 +29,7 @@ namespace Laba8 {
             MyEventArgs ee = e as MyEventArgs;
             DrawableObject obj = sender as DrawableObject;
 
-                nowS.Add(obj);
+            nowS.Add(obj);
             foreach (DrawableObject a in Info.storage) {
 
                 if (a == obj) {//Если сам себя двигает
@@ -42,15 +38,30 @@ namespace Laba8 {
 
                 if (a as DGroup != null) {
                     if (((DGroup)a).isContain(obj)) {
+                        Console.WriteLine("Group");
                         nowS.Add(a);
                         goto endP;
                     }
                 }
 
+
                 foreach (DrawableObject b in nowS) {//Если уже подвигали
                     Console.WriteLine("Same");
                     if (a == b) goto endP;
                 }
+
+                bool goEnd = false;
+                foreach (DrawableObject b in Info.selectedObj) {//Если уже подвигали
+                    Console.WriteLine("Selected");
+                    if (a == b) {
+                        nowS.Add(a);
+                        goEnd = true;
+                        //goto endP;     
+                    }
+                    //if (obj == b) goto endP;
+                }
+
+                if (goEnd == true) goto endP;
 
                 if (obj.checkContact(a)) {//Двигаем
                     nowS.Add(a);
@@ -59,7 +70,7 @@ namespace Laba8 {
                 }
             endP:;
             }
-            
+
 
 
             //Console.WriteLine((e as MyEventArgs).x + "   " + (e as MyEventArgs).y);
@@ -74,48 +85,7 @@ namespace Laba8 {
             nowS.Clear();
             //needToStickSender.clear();
         }
-        private void doStickThing() {
-
-            if (needToStickE == null) return;
-            MyEventArgs ee = needToStickE;
-
-            
-
-
-            foreach (DrawableObject obj in needToStickSender) {
-                nowS.Add(obj);
-                foreach (DrawableObject a in Info.storage) {
-
-                    if (a == obj) {//Если сам себя двигает
-                        goto endP;
-                    }
-
-                    if (a as DGroup != null) {
-                        if (((DGroup)a).isContain(obj)) {
-                            nowS.Add(a);
-                            goto endP;
-                        }
-                    }
-
-                    foreach (DrawableObject b in nowS) {//Если уже подвигали
-                        Console.WriteLine("Same");
-                        if (a == b) goto endP;
-                    }
-
-                    if (obj.checkContact(a)) {//Двигаем
-                        nowS.Add(a);
-                        a.move(ee.x, ee.y);
-                        a.checkExitByMove(panel1.ClientRectangle);
-                    }
-                endP:;
-                }
-            }
-
-            nowS.Clear();
-            needToStickSender.clear();
-            doStickIsDoing = false;
-
-        }
+        
         private void ddlChanged(object sender, EventArgs e) {
 
             comboBox1.Items.Clear();
@@ -223,7 +193,10 @@ namespace Laba8 {
 
         }
         private void panel1_MouseMove(object sender, MouseEventArgs e) {
+            Console.WriteLine("///////////");
+            
             if (instrument != null) {
+                Console.WriteLine("Move");
                 instrument.move(sender, e);
                 panel1.Invalidate();
             }
@@ -236,8 +209,9 @@ namespace Laba8 {
             }
             if (createStick == true) {
                 if (instrument as InsCreate != null) {
-                    Info.stickObj.add(Info.selectedObj.get(0));
+                    
                     if (Info.selectedObj.get(0) != null) {
+                        Info.stickObj.add(Info.selectedObj.get(0));
                         Info.selectedObj.get(0).onBeforeMoved += new EventHandler(stickChanged);
                     }
                 }

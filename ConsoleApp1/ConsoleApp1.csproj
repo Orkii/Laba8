@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Laba7\defRomb\defRomb\defRomb.csproj" />
+    <ProjectReference Include="..\..\..\Laba7\def\def\def.csproj" />
+    <ProjectReference Include="..\..\..\Laba7\standart\standart\standart.csproj" />
+    <ProjectReference Include="..\Laba8\Laba8.csproj" />
+  </ItemGroup>
+
+</Project>

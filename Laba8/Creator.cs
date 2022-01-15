@@ -11,7 +11,7 @@ using System.IO;
 
 namespace Laba8 {
 
-    class GroupCreator : Creator {
+    public class GroupCreator : Creator {
         List<Creator> creators;// = new List<Creator>();
 
         public GroupCreator() {
@@ -104,7 +104,7 @@ namespace Laba8 {
 
     }
 
-    class PlugCreator : Creator {
+    public class PlugCreator : Creator {
         public override string[] allowToCreate() {
             return new string[0];
         }

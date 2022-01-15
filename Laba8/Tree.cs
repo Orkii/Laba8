@@ -12,7 +12,7 @@ using System.Reflection;
 using System.IO;
 
 namespace Laba8 {
-    class Tree {
+    public class Tree {
         StorageListT storage;
         StorageListT selectedStorage;
         public TreeView tree;

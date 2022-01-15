@@ -12,13 +12,13 @@ using System.Threading;
 
 
 namespace Laba8 {
-    abstract class Instrument {
+    public abstract class Instrument {
         public abstract bool down(object sender, MouseEventArgs e);
         public abstract void move(object sender, MouseEventArgs e);
         public abstract void up(object sender, MouseEventArgs e);
     }
 
-    class InsCreate : Instrument {
+    public class InsCreate : Instrument {
 
         public override bool down(object sender, MouseEventArgs e) {
             //Console.WriteLine("Create down");
@@ -57,7 +57,7 @@ namespace Laba8 {
         }
     }
 
-    class InsResize : Instrument {
+    public class InsResize : Instrument {
         DrawableObject obj;
         public override bool down(object sender, MouseEventArgs e) {
             //Console.WriteLine("Resize down");
@@ -80,7 +80,7 @@ namespace Laba8 {
         }
     }
 
-    class InsMove : Instrument {
+    public class InsMove : Instrument {
         DrawableObject obj;
         Point startPoint;
         Point prevPoint;

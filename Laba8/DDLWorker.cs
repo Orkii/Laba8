@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Reflection;
 
 namespace Laba8 {
-    static class DDLWorker {
+    public static class DDLWorker {
 
         public static EventHandler smthChanged;
         public static void loadDDL(string path) {
